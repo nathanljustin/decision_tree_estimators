@@ -4,8 +4,10 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FairTree Fit Example &mdash; trees 0.0.1 documentation</title><link rel="stylesheet" href="../_static/css/trees.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <title>FairTree Fit Example &mdash; trees 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/trees.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
       <link rel="stylesheet" href="../_static/sg_gallery-binder.css" type="text/css" />
       <link rel="stylesheet" href="../_static/sg_gallery-dataframe.css" type="text/css" />
@@ -13,12 +15,14 @@
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script type="text/javascript" src="../_static/js/copybutton.js"></script>
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script src="../_static/js/copybutton.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -43,22 +47,22 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p><span class="caption-text">Getting Started</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../quick_start.html">Quick Start with the Trees Package</a></li>
 </ul>
-<p><span class="caption-text">Documentation</span></p>
+<p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../user_guide.html">User guide: create your own scikit-learn estimator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide.html">User guide: fitting tree estimators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api.html">Trees API</a></li>
 </ul>
-<p><span class="caption-text">Tutorial - Examples</span></p>
+<p class="caption" role="heading"><span class="caption-text">Tutorial - Examples</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">General examples</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="plot_template.html">Plotting Template Estimator</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pipeline_example.html">Sklearn Pipeline Example</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_transformer.html">Plotting Template Transformer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plotting_example.html">Tree Plotting Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline_example.html">Sklearn Pipeline Example</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_classifier.html">Plotting Template Classifier</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">FairTree Fit Example</a></li>
 </ul>
@@ -99,7 +103,9 @@ to download the full example code</p>
 <span id="sphx-glr-auto-examples-fit-fairtree-example-py"></span><h1>FairTree Fit Example<a class="headerlink" href="#fairtree-fit-example" title="Permalink to this headline">¶</a></h1>
 <p>An example of fitting a FairTree decision tree using <a class="reference internal" href="../generated/trees.FairTree.FairTreeClassifier.html#trees.FairTree.FairTreeClassifier" title="trees.FairTree.FairTreeClassifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">trees.FairTree.FairTreeClassifier</span></code></a></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">trees.FairTree</span> <span class="kn">import</span> <span class="n">FairTreeClassifier</span>
+<span class="kn">from</span> <span class="nn">trees.utils.StrongTreeUtils</span> <span class="kn">import</span> <span class="n">print_tree</span>
 
 
 <span class="n">data_train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;./data/compas/compas_train_1.csv&quot;</span><span class="p">)</span>
@@ -151,12 +157,13 @@ to download the full example code</p>
     <span class="n">obj_mode</span> <span class="o">=</span> <span class="s1">&#39;balance&#39;</span>
 <span class="p">)</span>
 
-<span class="n">fcl_obj</span> <span class="o">=</span> <span class="n">fcl</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">P_train</span><span class="p">,</span> <span class="n">l_train</span><span class="p">)</span>
+<span class="n">fcl</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">P_train</span><span class="p">,</span> <span class="n">l_train</span><span class="p">)</span>
+<span class="n">print_tree</span><span class="p">(</span><span class="n">fcl</span><span class="o">.</span><span class="n">grb_model</span><span class="p">,</span> <span class="n">fcl</span><span class="o">.</span><span class="n">b_value</span><span class="p">,</span> <span class="n">fcl</span><span class="o">.</span><span class="n">w_value</span><span class="p">,</span> <span class="n">fcl</span><span class="o">.</span><span class="n">p_value</span><span class="p">)</span>
 <span class="n">pred_test</span> <span class="o">=</span> <span class="n">fcl</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
-<span class="c1"># sp_val = fcl_obj.get_SP(P_test, y_test)</span>
-<span class="c1"># csp_val = fcl_obj.get_CSP(P_test, l_test, y_test)</span>
-<span class="c1"># eq_val = fcl_obj.get_EqOdds(P_test, y_test, pred_test)</span>
-<span class="c1"># ceq_val = fcl_obj.get_CondEqOdds(P_test, l_test, y_test, pred_test)</span>
+<span class="c1"># sp_val = fcl.get_SP(P_test, y_test)</span>
+<span class="c1"># csp_val = fcl.get_CSP(P_test, l_test, y_test)</span>
+<span class="c1"># eq_val = fcl.get_EqOdds(P_test, y_test, pred_test)</span>
+<span class="c1"># ceq_val = fcl.get_CondEqOdds(P_test, l_test, y_test, pred_test)</span>
 </pre></div>
 </div>
 <p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.000 seconds)</p>
